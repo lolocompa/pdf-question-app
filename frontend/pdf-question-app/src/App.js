@@ -50,9 +50,23 @@ function App() {
     <div>
       <div className="header">
         <img className="logo" src={logo} alt="logo" />
-        <div className="upload" onClick={handleUploadDivClick}>
-          <img className="add-icon" src={uploadicon} alt="" />
-          <h4>Upload PDF</h4>
+        <div className="right-header">
+          {selectedFile && (
+            <div className="uploaded-file">
+              <div className="icon-container">
+                <i className="bi bi-file-earmark"></i>
+              </div>
+              <h4>
+                {selectedFile.name.length > 30
+                  ? `${selectedFile.name.slice(0, 30)}...`
+                  : selectedFile.name}
+              </h4>
+            </div>
+          )}
+          <div className="upload" onClick={handleUploadDivClick}>
+            <img className="add-icon" src={uploadicon} alt="" />
+            <h4>Upload PDF</h4>
+          </div>
         </div>
         <input
           ref={fileInputRef}

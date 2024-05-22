@@ -10,23 +10,29 @@
   width: 10%;
 }
 
+.right-header {
+  display: flex;
+  min-width: 12%;
+  align-items: center;
+}
+
 .upload {
+  width: 170px;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  width: 15%;
   border: solid black;
   border-radius: 10px;
   height: 40px;
 }
 
 .add-icon {
-  width: 10%;
+  width: 15%;
 }
 
 .upload h4 {
-  margin-left: 5px;
+  margin-left: 8px;
 }
 
 .content {
@@ -58,4 +64,27 @@
   font-size: 26px;
   margin-left: 10px;
   cursor: pointer;
+}
+
+.uploaded-file {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 50px;
+}
+
+.icon-container {
+  border: 1px solid #22c55e;
+  padding: 3px;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.icon-container i {
+  color: #22c55e;
+  font-size: 20px;
+}
+
+.uploaded-file h4 {
+  color: #22c55e;
 }
