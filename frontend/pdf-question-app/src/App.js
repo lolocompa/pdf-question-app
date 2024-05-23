@@ -2,23 +2,33 @@ import React, { useState, useRef } from "react";
 import logo from "./planetai.svg";
 import "./App.css";
 import uploadicon from "./upload.png";
+import ai_logo from "./ai-logo.jpeg";
+import user_icon from "./person-circle.svg";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 function App() {
+  class message {
+    constructor(name, content) {
+      this.name = name;
+      this.content = content;
+    }
+  }
+
   const [selectedFile, setSelectedFile] = useState(null);
+  const [question, setQuestion] = useState("");
+  const [conversation, setConversation] = useState([]);
   const fileInputRef = useRef(null);
 
-  const handleFileChange = (event) => {
+  console.log(conversation);
+
+  const handleFileChange = async (event) => {
     setSelectedFile(event.target.files[0]);
+    await handleUpload(event.target.files[0]);
   };
 
-  const handleUpload = async () => {
+  const handleUpload = async (file) => {
     const formData = new FormData();
-    formData.append("file", selectedFile);
-
-    formData.forEach((value, key) => {
-      console.log(key, value);
-    });
+    formData.append("file", file);
 
     try {
       const response = await fetch("/upload", {
@@ -42,9 +52,50 @@ function App() {
     fileInputRef.current.click();
   };
 
-  if (selectedFile) {
-    handleUpload();
-  }
+  const submitQuestion = async () => {
+    if (!selectedFile) {
+      console.error("No file selected");
+      return;
+    }
+
+    if (question.length < 1) {
+      return;
+    }
+
+    const payload = {
+      filename: selectedFile.name,
+      question: question,
+    };
+    const my_question = new message("me", question);
+    setConversation((prevConversation) => [...prevConversation, my_question]);
+
+    setQuestion("");
+
+    try {
+      const response = await fetch("/ask/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Answer received:", data.answer);
+        const new_message = new message("ai", data.answer);
+        setConversation((prevConversation) => [
+          ...prevConversation,
+          new_message,
+        ]);
+      } else {
+        console.error("Failed to get answer");
+        // You can add code here to handle failure
+      }
+    } catch (error) {
+      console.error("Error getting answer:", error);
+      // You can add code here to handle errors
+    }
+  };
 
   return (
     <div>
@@ -76,14 +127,38 @@ function App() {
           style={{ display: "none" }}
         />
       </div>
-      <div className="content"></div>
+      <div className="content">
+        {conversation.map((msg, index) =>
+          msg.name === "ai" ? (
+            <div key={index} className="ai-message-container">
+              <div className="message ai-message">
+                <div className="ai_icon">
+                  <img src={ai_logo} alt="" />
+                </div>
+                <p>{msg.content}</p>
+              </div>
+            </div>
+          ) : (
+            <div key={index} className="me-message-container">
+              <div className="message me-message">
+                <div className="my_icon">
+                  <i class="bi bi-person-circle"></i>
+                </div>
+                <p>{msg.content}</p>
+              </div>
+            </div>
+          )
+        )}
+      </div>
       <div className="input_container">
         <input
           placeholder="Send a message..."
           className="question"
+          value={question}
           type="text"
+          onChange={(e) => setQuestion(e.target.value)}
         />
-        <i className="bi bi-send"></i>
+        <i onClick={submitQuestion} className="bi bi-send"></i>
       </div>
     </div>
   );

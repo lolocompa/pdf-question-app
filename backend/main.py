@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import init_db
 from api import upload
+from api import question
 
 app = FastAPI()
 
@@ -22,6 +23,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(upload.router)
+app.include_router(question.router)
 
 
 

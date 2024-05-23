@@ -88,3 +88,42 @@
 .uploaded-file h4 {
   color: #22c55e;
 }
+
+.content {
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ai-message-container,
+.me-message-container {
+  width: 80%;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.message {
+  display: flex;
+}
+
+.ai_icon img {
+  width: 60px;
+}
+
+.my_icon {
+  display: flex;
+  align-items: center;
+  margin-left: 7px;
+  margin-right: 11px;
+}
+
+.my_icon i {
+  color: gray;
+  font-size: 45px;
+}
+
+.message p {
+  line-height: 1.5;
+}

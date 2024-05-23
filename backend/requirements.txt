@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+pymupdf
+langchain  
+requests
+langchain_community
+openai
