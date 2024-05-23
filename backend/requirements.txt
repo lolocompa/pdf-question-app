@@ -4,4 +4,5 @@ pymupdf
 langchain  
 requests
 langchain_community
+langchain_openai
 openai

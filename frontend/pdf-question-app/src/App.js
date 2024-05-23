@@ -46,6 +46,7 @@ function App() {
 
   const handleFileChange = async (event) => {
     setSelectedFile(event.target.files[0]);
+    setConversation([])
     await handleUpload(event.target.files[0]);
   };
 
