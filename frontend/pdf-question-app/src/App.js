@@ -3,8 +3,10 @@ import logo from "./planetai.svg";
 import "./App.css";
 import uploadicon from "./upload.png";
 import ai_logo from "./ai-logo.jpeg";
-import user_icon from "./person-circle.svg";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
 
 function App() {
   class message {
@@ -14,12 +16,33 @@ function App() {
     }
   }
 
+  const {
+    transcript,
+    listening,
+    resetTranscript,
+    browserSupportsSpeechRecognition,
+  } = useSpeechRecognition();
+
   const [selectedFile, setSelectedFile] = useState(null);
   const [question, setQuestion] = useState("");
   const [conversation, setConversation] = useState([]);
+  const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
 
-  console.log(conversation);
+  // starts 
+  const handleSpeech = () => {
+    if (!browserSupportsSpeechRecognition) {
+      console.error("Browser does not support speech recognition.");
+      return;
+    }
+    SpeechRecognition.startListening({ continuous: true });
+  };
+
+  const stopSpeech = () => {
+    SpeechRecognition.stopListening();
+    setQuestion(transcript);
+    resetTranscript();
+  };
 
   const handleFileChange = async (event) => {
     setSelectedFile(event.target.files[0]);
@@ -54,12 +77,16 @@ function App() {
 
   const submitQuestion = async () => {
     if (!selectedFile) {
-      console.error("No file selected");
+      setError("No file selected");
       return;
     }
 
     if (question.length < 1) {
       return;
+    }
+
+    if (error) {
+      setError(null);
     }
 
     const payload = {
@@ -108,7 +135,9 @@ function App() {
                 <i className="bi bi-file-earmark"></i>
               </div>
               <h4>
-                {selectedFile.name.length > 30
+                {window.innerWidth < 500
+                  ? `${selectedFile.name.slice(0, 10)}...`
+                  : selectedFile.name.length > 30
                   ? `${selectedFile.name.slice(0, 30)}...`
                   : selectedFile.name}
               </h4>
@@ -150,6 +179,11 @@ function App() {
           )
         )}
       </div>
+      {error && (
+        <div className="error">
+          <h4>{error}</h4>
+        </div>
+      )}
       <div className="input_container">
         <input
           placeholder="Send a message..."
@@ -159,6 +193,12 @@ function App() {
           onChange={(e) => setQuestion(e.target.value)}
         />
         <i onClick={submitQuestion} className="bi bi-send"></i>
+        <i
+          onMouseDown={handleSpeech}
+          onMouseUp={stopSpeech}
+          className="bi bi-mic"
+          style={{ color: listening ? 'red' : 'black' }}
+        ></i>
       </div>
     </div>
   );
